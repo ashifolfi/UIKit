@@ -91,7 +91,7 @@ public class Slider : Widget
         var thumbPos = (percentage * (Size.X - THUMB_SIZE)) + HALF_SIZE;
         thumbPos += GlobalPosition.X;
         vertCenter += GlobalPosition.Y;
-
+        
         if (
             (data.X >= thumbPos - HALF_SIZE && data.X <= thumbPos + HALF_SIZE)
             && (data.Y >= vertCenter - HALF_SIZE && data.Y <= vertCenter + HALF_SIZE)
@@ -108,10 +108,11 @@ public class Slider : Widget
 
     protected override bool OnMouseMotionEvent(MmEventData data)
     {
+        var offsetX = data.X - GlobalPosition.X;
+        
         if (m_IsHeld && data.Dx != 0.0f)
         {
-            Value += 0.01f * Math.Sign(data.Dx);
-            
+            Value = (offsetX / Size.X) * (m_MaxValue - m_MinValue) + m_MinValue;
             return true;
         }
         
