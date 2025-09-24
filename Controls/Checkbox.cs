@@ -1,8 +1,8 @@
 namespace UIKit.Controls;
 
-public class Checkbox : Widget
+public class Checkbox : Button
 {
-    public Checkbox(Widget? parent) : base(parent)
+    public Checkbox(Widget? parent, string label) : base(parent, label)
     {
     }
 
@@ -10,6 +10,6 @@ public class Checkbox : Widget
     {
         using var canvas = Surface.Canvas;
         
-        
+        // todo: checkbox visuals
     }
 }

@@ -105,7 +105,7 @@ public abstract class Widget
         }
     }
 
-    public void Paint(SKCanvas canvas)
+    public virtual void Paint(SKCanvas canvas)
     {
         if (m_WSurface == null)
             RecreateSurface(); // create surface if it doesn't exist yet

@@ -16,6 +16,8 @@ public class Button : Widget
     public string Text = "";
     public ButtonState State = ButtonState.Normal;
     public EventHandler? OnPressed;
+    public bool ToggleMode = false;
+    public bool Pressed = false;
 
     public Button(Widget? parent) : base(parent)
     {
@@ -31,12 +33,18 @@ public class Button : Widget
         switch (data)
         {
             case { Button: MbEventData.LeftButton, Pressed: true }:
-                State = ButtonState.Pressed;
+                if (!ToggleMode) Pressed = true;
                 return true;
             case { Button: MbEventData.LeftButton, Pressed: false }:
-                if (State == ButtonState.Pressed)
-                    OnPressed?.Invoke(this, EventArgs.Empty);
-                State = IsHovered ? ButtonState.Hovered : ButtonState.Normal;
+                if (ToggleMode)
+                {
+                    Pressed = !Pressed;
+                }
+                else
+                {
+                    Pressed = false;
+                }
+                OnPressed?.Invoke(this, new ButtonChangedEventArgs() { Pressed = Pressed });
                 return true;
         }
 
@@ -55,13 +63,7 @@ public class Button : Widget
     
     protected override void OnUpdateEvent()
     {
-        State = IsHovered switch
-        {
-            // keep the value if we fail this check, retains the pressed state
-            true when State != ButtonState.Pressed => ButtonState.Hovered,
-            false when State != ButtonState.Pressed => ButtonState.Normal,
-            _ => State
-        };
+        State = Pressed ? ButtonState.Pressed : IsHovered ? ButtonState.Hovered : ButtonState.Normal;
     }
 
     protected override void OnPaintEvent()

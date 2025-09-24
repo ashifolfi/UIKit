@@ -23,7 +23,7 @@ public class Slider : Widget
         }
     }
 
-    private float m_Value = 0.5f;
+    private float m_Value = 0.0f;
     private float m_MaxValue = 1.0f;
     private float m_MinValue = 0.0f;
     
