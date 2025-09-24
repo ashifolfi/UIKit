@@ -8,6 +8,7 @@ public class Slider : Widget
     private const float THUMB_SIZE = 12.0f;
     private const float HALF_SIZE = THUMB_SIZE / 2;
     private const float THUMB_PADDING = 6.0f;
+    private const float CONTROL_PADDING = 6.0f;
     
     public float Value
     {
@@ -22,7 +23,7 @@ public class Slider : Widget
         }
     }
 
-    private float m_Value = 1f;
+    private float m_Value = 0.5f;
     private float m_MaxValue = 1.0f;
     private float m_MinValue = 0.0f;
     
@@ -37,10 +38,21 @@ public class Slider : Widget
     protected override void OnPaintEvent()
     {
         using var canvas = Surface.Canvas;
+        
+        canvas.DrawRect(
+            0, 0, Size.X, Size.Y,
+            new SKPaint()
+            {
+                Style = SKPaintStyle.Stroke,
+                Color = SKColors.Red,
+                StrokeWidth = 2
+            }
+        );
+        
         var vertCenter = Size.Y / 2;
         
         var percentage = (m_Value - m_MinValue) / (m_MaxValue - m_MinValue);
-        var thumbPos = (percentage * (Size.X - THUMB_SIZE)) + HALF_SIZE;
+        var thumbPos = (percentage * (Size.X - (THUMB_SIZE + CONTROL_PADDING * 2))) + (HALF_SIZE + CONTROL_PADDING);
         
         canvas.DrawCircle(
             thumbPos, vertCenter,
@@ -55,10 +67,10 @@ public class Slider : Widget
         var lEnd = thumbPos - (HALF_SIZE + (THUMB_PADDING / 2));
         var rStart = thumbPos + (HALF_SIZE + (THUMB_PADDING / 2));
 
-        if (lEnd >= HALF_SIZE)
+        if (lEnd >= HALF_SIZE + CONTROL_PADDING)
         {
             canvas.DrawLine(
-                HALF_SIZE, vertCenter,
+                HALF_SIZE + CONTROL_PADDING, vertCenter,
                 lEnd, vertCenter,
                 new SKPaint()
                 {
@@ -69,11 +81,11 @@ public class Slider : Widget
             );
         }
 
-        if (rStart < Size.X - THUMB_SIZE)
+        if (rStart < Size.X - (HALF_SIZE + CONTROL_PADDING))
         {
             canvas.DrawLine(
                 rStart, vertCenter,
-                Size.X - THUMB_SIZE, vertCenter,
+                Size.X - (HALF_SIZE + CONTROL_PADDING), vertCenter,
                 new SKPaint()
                 {
                     Style = SKPaintStyle.Stroke,
@@ -88,7 +100,7 @@ public class Slider : Widget
     {
         var vertCenter = Size.Y / 2;
         var percentage = (m_Value - m_MinValue) / (m_MaxValue - m_MinValue);
-        var thumbPos = (percentage * (Size.X - THUMB_SIZE)) + HALF_SIZE;
+        var thumbPos = (percentage * (Size.X - (THUMB_SIZE + CONTROL_PADDING * 2))) + (HALF_SIZE + CONTROL_PADDING);
         thumbPos += GlobalPosition.X;
         vertCenter += GlobalPosition.Y;
         
@@ -108,11 +120,11 @@ public class Slider : Widget
 
     protected override bool OnMouseMotionEvent(MmEventData data)
     {
-        var offsetX = data.X - GlobalPosition.X;
+        var offsetX = data.X - (GlobalPosition.X + HALF_SIZE + CONTROL_PADDING);
         
         if (m_IsHeld && data.Dx != 0.0f)
         {
-            Value = (offsetX / Size.X) * (m_MaxValue - m_MinValue) + m_MinValue;
+            Value = (offsetX / (Size.X - (THUMB_SIZE + CONTROL_PADDING * 2))) * (m_MaxValue - m_MinValue) + m_MinValue;
             return true;
         }
         
